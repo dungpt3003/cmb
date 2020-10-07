@@ -26,6 +26,9 @@ def generateMatrixC(T, N):
     diagN = np.eye(N)
     return np.kron(T, diagN)
 
+# Re-calculate matrix A for comparison
+def calculateA(m, n, ):
+
 
 if __name__ == '__main__':
     A = loadMatrix("data/a.csv")
