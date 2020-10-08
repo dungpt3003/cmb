@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # This files contains functions to construct matrices 
 import numpy as np
+from utils import calculateA
 
 # Load normal matrix from file
 def loadMatrix(aFile):
@@ -25,9 +26,6 @@ def generateMatrixB(A, N):
 def generateMatrixC(T, N):
     diagN = np.eye(N)
     return np.kron(T, diagN)
-
-# Re-calculate matrix A for comparison
-def calculateA(m, n, ):
 
 
 if __name__ == '__main__':

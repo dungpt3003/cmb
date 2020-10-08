@@ -37,3 +37,25 @@ def calc_galatic_dust(v):
 # a_ff(v, v0) = c(v)* (v/ v0)^k_ff
 def calc_free_emission(v):
     return calc_conversion_factor(v) * ((v / V_0) ** K_FF)
+
+# Calculate the mxn matrix A
+# The first column is all 1 (CMB source)
+# The n-1 other columns represent other sources: synchrotron, glatic dust, free-free emission
+def calculateA(m, n):
+    A = np.zeros((m, n))
+    A[:, 0] = 1
+    A[:, 1] = [calc_synchrotron(x) for x in V_PLANCK]
+    A[:, 2] = [calc_galatic_dust(x) for x in V_PLANCK]
+    A[:, 3] = [calc_free_emission(x) for x in V_PLANCK]
+    return A
+
+def pretty_print_matrix(X):
+    m = X.shape[0]
+    n = X.shape[1]
+    for i in range(m):
+        for j in range(n-1):
+            print(X[i, j], end=',')
+        print(X[i, n-1])
+    return
+
+A = pretty_print_matrix(calculateA(9, 4))
