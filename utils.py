@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from scipy import constants
 import numpy as np
+import math
 
 V_PLANCK = [x * (10**9) for x in [30.0, 44.0, 70.0, 100.0, 143.0, 217.0, 353.0, 545.0, 857.0]]
 V_0 = V_PLANCK[4]
@@ -10,12 +11,17 @@ K_S = -2.65
 K_D = 1.5
 K_FF = -2.14
 T1 = 18.1
+L = "left"
+R = "right"
+U = "up"
+D = "down"
 
 # Calculate conversion factor c(v) based on the formula:
 # c(v) = (e^psi − 1)^2/psi^2e^psi where psi = hv/k_BT1
 def calc_conversion_factor(v):
     psi = (PLANCK_H) * v / (BOLTZMANN_K * T1)
     e_psi = np.exp(psi)
+    print(psi)
     return ((e_psi - 1) ** 2) / (psi*psi * e_psi)
 
 # Calculate B(v) based on the formula:
@@ -26,6 +32,7 @@ def B(v):
 # Calculate synchrotron value based on the formula:
 # a_s(v, v0) = c(v) * (v/ v0) ^ k_s 
 def calc_synchrotron(v):
+    print(calc_conversion_factor(v))
     return calc_conversion_factor(v) * ((v / V_0) ** K_S)
 
 # Calculate galatic dust value based on the formula:
@@ -58,4 +65,41 @@ def pretty_print_matrix(X):
         print(X[i, n-1])
     return
 
-A = pretty_print_matrix(calculateA(9, 4))
+def findNeighbors(i, m, n):
+    """find all the neighbours of i
+    Parameters
+    ----------
+    i : int
+        the index of the point that we need to find its neighbours
+    m : int
+        the number of rows of original matrix is n*n
+    n : int
+        the number of columns of original matrix is n*n
+    """
+
+    # all the neighours of i
+    res = {
+            L:i-m,
+            R:i+m,
+            U:i-1,
+            D:i+1
+            }
+
+    # remove all the invalid neighbours
+    if i % m == 0: #the first row
+        res.pop(U)
+    elif (i % n) == (n - 1):#the last row
+        res.pop(D)
+    if i < m: # the first column
+        res.pop(L)
+    elif i > n*m-1-m: # the last column
+        res.pop(R)
+    return res.values()
+
+def mostSqure(v):
+    sqrt = int(math.sqrt(v))
+    for i in range(sqrt, 0, -1):
+        if v % i == 0:
+            return (i, v/i)
+
+print(calc_synchrotron(V_PLANCK[0]))

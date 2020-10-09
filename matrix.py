@@ -27,9 +27,26 @@ def generateMatrixC(T, N):
     diagN = np.eye(N)
     return np.kron(T, diagN)
 
+def generateD(lvl):
+    """ compute matrix D
+    Parameters:
+    ----------
+    lvl : int
+        Power Level
+    """
+    size = calNFromLvl(lvl)
+    (m,n) = mostSqure(size)
+    res = np.zeros((size,size),dtype=int)
 
-if __name__ == '__main__':
-    A = loadMatrix("data/a.csv")
-    T = loadDiagonalMatrix("data/t.csv")
-    print(A)
-    print(T)
+    for i in range(0, size):
+        # fill all the neighbours of i
+        diag = 0
+        for pos in findNeighbors(i,m,n):
+            res[i][pos] = 1
+            diag += 1
+        res[i][i] = -1*diag
+    return res
+
+
+def calNFromLvl(lvl):
+    return 4**lvl*12
