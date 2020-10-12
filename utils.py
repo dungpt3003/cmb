@@ -65,41 +65,67 @@ def pretty_print_matrix(X):
         print(X[i, n-1])
     return
 
-def findNeighbors(i, m, n):
+def find_neighbors(i, m, n):
     """find all the neighbours of i
     Parameters
     ----------
     i : int
         the index of the point that we need to find its neighbours
     m : int
-        the number of rows of original matrix is n*n
+        the number of rows of original matrix (3*Nside)
     n : int
-        the number of columns of original matrix is n*n
+        the number of columns of original matrix (4*Nside)
     """
 
-    # all the neighours of i
+    # All the neighours of i
     res = {
-            L:i-m,
-            R:i+m,
-            U:i-1,
-            D:i+1
-            }
-
-    # remove all the invalid neighbours
-    if i % m == 0: #the first row
+            L: i - m,
+            R: i + m,
+            U: i - 1,
+            D: i + 1
+        }
+        
+    # Remove all the invalid neighbours
+    if i % m == 0: # The first row
         res.pop(U)
-    elif (i % n) == (n - 1):#the last row
+    elif (i % n) == (n - 1): #The last row
         res.pop(D)
-    if i < m: # the first column
+    if i - m < 0: # The first column
         res.pop(L)
-    elif i > n*m-1-m: # the last column
+    elif i + m > n * m - 1: # The last column
         res.pop(R)
     return res.values()
 
-def mostSqure(v):
-    sqrt = int(math.sqrt(v))
-    for i in range(sqrt, 0, -1):
-        if v % i == 0:
-            return (i, v/i)
+def calc_D_size(v):
+    # sqrt = int(math.sqrt(v))
+    # for i in range(sqrt, 0, -1):
+    #     if v % i == 0:
+    #         return (i, v/i)
+    base = 2**v
+    return 3*base, 4*base
 
-print(calc_synchrotron(V_PLANCK[0]))
+def generate_matrix_D(lvl):
+    """ Compute matrix D
+    Parameters:
+    ----------
+    lvl : int
+        Power Level
+    """
+    size = calNFromLvl(lvl)
+    (m,n) = calc_D_size(lvl)
+    res = np.zeros((size,size),dtype=int)
+
+    for i in range(0, size):
+        neighbors = find_neighbors(i, m, n) 
+        for pos in neighbors:
+            res[i][pos] = 1
+        
+        res[i][i] = -1 * len(neighbors)
+    return res
+
+def calNFromLvl(lvl):
+    # N = 12 * N_side ^ 2 = 12 * (2*lvl)^2
+    return (4**lvl) * 12
+
+for i in range (0, 3):
+    print(generate_matrix_D(i))
