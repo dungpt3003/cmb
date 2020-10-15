@@ -48,7 +48,7 @@ def calc_free_emission(v):
 # Calculate the mxn matrix A
 # The first column is all 1 (CMB source)
 # The n-1 other columns represent other sources: synchrotron, glatic dust, free-free emission
-def calculateA(m, n):
+def calculate_matrix_A(m, n):
     A = np.zeros((m, n))
     A[:, 0] = 1
     A[:, 1] = [calc_synchrotron(x) for x in V_PLANCK]
@@ -104,28 +104,6 @@ def calc_D_size(v):
     base = 2**v
     return 3*base, 4*base
 
-def generate_matrix_D(lvl):
-    """ Compute matrix D
-    Parameters:
-    ----------
-    lvl : int
-        Power Level
-    """
-    size = calNFromLvl(lvl)
-    (m,n) = calc_D_size(lvl)
-    res = np.zeros((size,size),dtype=int)
-
-    for i in range(0, size):
-        neighbors = find_neighbors(i, m, n) 
-        for pos in neighbors:
-            res[i][pos] = 1
-        
-        res[i][i] = -1 * len(neighbors)
-    return res
-
-def calNFromLvl(lvl):
+def calculate_N_from_level(lvl):
     # N = 12 * N_side ^ 2 = 12 * (2*lvl)^2
     return (4**lvl) * 12
-
-for i in range (0, 3):
-    print(generate_matrix_D(i))
