@@ -24,7 +24,11 @@ class DThread(threading.Thread):
             neighs_len = len(neighs)
             for j in range(0,self.n):
                 for idx in neighs:
-                    self.res[i][j] += self.x[idx][j]
+                    try:
+                        self.res[i][j] += self.x[idx][j]
+                    except:
+                        print("Errror")
+                        
                 self.res[i][j] -= (neighs_len * self.x[i][j])
 
 class ConjugateSolution(Solution):

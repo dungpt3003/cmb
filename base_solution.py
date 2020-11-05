@@ -31,7 +31,7 @@ class Solution:
         self.y = y
         self.u = None
         self.P = np.eye(self.num_n)
-        self.Dsize = calc_D_size(self.num_N)
+        self.Dsize = calc_D_size(self.num_lvl)
         
         
     def load_matrices_from_files(self):
