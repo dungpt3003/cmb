@@ -31,12 +31,15 @@ class Solution:
         self.y = y
         self.u = None
         self.P = np.eye(self.num_n)
-        self.Dsize = None
+        self.Dsize = calc_D_size(self.num_N)
         
         
     def load_matrices_from_files(self):
         self.A = load_matrix(self.af)
         self.T = load_diagonal_matrix(self.tf)
+    
+    def get_D_size(self):
+        return self.Dsize
         
     def get_D(self):
         return self.D
