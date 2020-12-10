@@ -50,3 +50,14 @@ def generate_matrix_Q(D, n, N):
         Q[s : s + N, s : s + N] = DSqure
     Q = Q
     return Q
+
+# Generate matrix S_hat = A^TTAP^{-1}, assumming that P is a identity matrix
+def generate_matrix_S_hat(A, T):
+    A_trans = np.transpose(A)
+    return A_trans.dot(T.dot(A))
+
+# Generate matrix Y_hat = YTAP^{-1}, with Y = reshape(y,N,m)
+def generate_matrix_Y_hat(y, N, m, T, A):
+    Y = np.reshape(y,(N, m), order='F')
+
+    return Y.dot(T.dot(A))
