@@ -4,10 +4,10 @@ import numpy as np
 import math
 
 V_PLANCK = [x * (10**9) for x in [30.0, 44.0, 70.0, 100.0, 143.0, 217.0, 353.0, 545.0, 857.0]]
-V_0 = V_PLANCK[4]
+V_0 = V_PLANCK[3]
 PLANCK_H = constants.Planck
 BOLTZMANN_K = constants.Boltzmann
-K_S = -2.65 
+K_S = -2.65
 K_D = 1.5
 K_FF = -2.14
 T1 = 18.1
@@ -27,7 +27,7 @@ def calc_conversion_factor(v):
 # Calculate B(v) based on the formula:
 # B(v) = v/[exp(hv/kBT1) − 1]
 def B(v):
-    return v / (np.exp(PLANCK_H/(BOLTZMANN_K * T1)) - 1)
+    return v / (np.exp(PLANCK_H * v/(BOLTZMANN_K * T1)) - 1)
 
 # Calculate synchrotron value based on the formula:
 # a_s(v, v0) = c(v) * (v/ v0) ^ k_s 
