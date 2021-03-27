@@ -21,7 +21,7 @@ D = "down"
 def calc_conversion_factor(v):
     psi = (PLANCK_H) * v / (BOLTZMANN_K * T1)
     e_psi = np.exp(psi)
-    print(psi)
+    #print(psi)
     return ((e_psi - 1) ** 2) / (psi*psi * e_psi)
 
 # Calculate B(v) based on the formula:
@@ -32,7 +32,7 @@ def B(v):
 # Calculate synchrotron value based on the formula:
 # a_s(v, v0) = c(v) * (v/ v0) ^ k_s 
 def calc_synchrotron(v):
-    print(calc_conversion_factor(v))
+    #print(calc_conversion_factor(v))
     return calc_conversion_factor(v) * ((v / V_0) ** K_S)
 
 # Calculate galatic dust value based on the formula:

@@ -18,6 +18,15 @@ def load_diagonal_matrix(aFile):
             T[i,i] = temp[i]
         return T
 
+# Load values from file and create a diagonal matrix
+def load_diagonal_matrix_inverse(aFile):
+    with open(aFile, "r") as f:
+        temp = np.loadtxt(f,delimiter=",")
+        T = np.zeros((temp.shape[0], temp.shape[0]))
+        for i in range(0,temp.shape[0]):
+            T[i,i] = 1/temp[i]
+        return T
+
 # Generate matrix matrix B as the Kronecker product of A and the identity matrix size N
 def generate_matrix_B(A, N):
     return np.kron(A, np.eye(N))
