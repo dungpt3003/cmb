@@ -22,12 +22,9 @@ def generate_sources(m, n, h):
     S_ = np.zeros(0)
     mean = np.zeros(m)
     T = load_diagonal_matrix_inverse("data/t.csv")
-    print("Mean: ", mean)
-    print("Covariance: ", T)
     for i in range(repetition):
         S = generate_random_sources(h)
         S_ = np.append(S_, S)
-        print(S)
         for j in range(base_patch):
             y_temp = np.matmul(A, S[:, j]) + np.random.multivariate_normal(mean, T)
             y = np.append(y, y_temp)
@@ -52,8 +49,6 @@ if __name__ == '__main__':
         ite_x = ite_s.findSolution()
         end = time.time()
         print("iterate method took:{0}s".format(end - start))
-        print("Solution:", ite_x)
-        print("Original", S)
         sys.stdout.flush()
 
         #std solution
