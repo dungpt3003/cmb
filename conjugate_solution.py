@@ -104,12 +104,8 @@ class ConjugateSolution(Solution):
             r_k1_norm = np.dot(r,r)
             beta = r_k1_norm/r_k_norm
             r_k_norm = r_k1_norm
-            #if r_k1_norm < 1e-10 * origin_r_norm:
+           
             if r_k1_norm < 1e-5:
-                #newr = b - self.calQx(x) - self.calBTCBx(x)
-                #newr_norm = np.dot(newr,newr)
-                #print('Itr:', i, r_k1_norm,newr_norm)
-                print('Itr:', i, r_k1_norm)
                 break
             p = r + beta * p
         return x

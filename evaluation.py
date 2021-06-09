@@ -6,6 +6,8 @@ import sys
 from matrix import *
 from utils import *
 from conjugate_solution import ConjugateSolution
+from standard_solution import StandardSolution
+import sys, getopt
 
 def generate_random_sources(n, m, h, mean_s, sd_s, printable=True):
     """Generate random source s and source vector y
@@ -36,40 +38,44 @@ def generate_random_sources(n, m, h, mean_s, sd_s, printable=True):
         np.savetxt('output/random_y.txt', [y], delimiter=',', fmt='%0.20f')
         np.savetxt('output/random_s.txt', [s], delimiter=',', fmt='%0.20f')
 
-    return s, y
+    return y, s
+
+def main(argv):
+    # The number of frequencies and number of sources for CMB problem are fixed
+    n = 9
+    m = 4
+    source_file_a = "data/a.csv"
+    source_file_t = "data/t.csv"
+    thread_num = 4
+
+    # Define command line arguments: HEALPix level and method used.
+    level = 1
+    method = 'std'
+    try:
+        opts, args = getopt.getopt(argv,"hl:m:",["level=","method="])
+    except getopt.GetoptError:
+        print ('evaluation.py -l <level> -m <method>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print ('evaluation.py -l <level> -m <method>')
+            sys.exit()
+        elif opt in ("-l", "--level"):
+            level = int(arg)
+        elif opt in ("-m", "--method"):
+            method = arg
+    y, s = generate_random_sources(n, m, level, 1, 0.1, True)
+    start = time.time()
+    if method == 'cg':
+        method_s = ConjugateSolution(source_file_a, source_file_t,  n,  m, level, y, 0.001, thread_num)
+        method_x = method_s.findSolution()
+        np.savetxt('output/result_s_cg.txt', [method_x], delimiter=',', fmt='%0.20f')
+    else:
+        method_s = StandardSolution(source_file_a, source_file_t, m, n, level, y)
+        method_x = method_s.findSolution()
+        np.savetxt('output/result_s_std.txt', [method_x], delimiter=',', fmt='%0.20f')
+    end = time.time()
+    print("The {0} method took {1} seconds".format(method, end - start))
     
 if __name__ == '__main__':
-    m = 9
-    n = 4
-    sourcefilea = "data/a.csv"
-    sourcefilet = "data/t.csv"
-    tnum = 4
-
-    generate_random_sources(9, 4, 3, 1, 0.1, True)
-    # for i in range(1,10):
-        
-    #     print("-------------lvl:{0}, N:{1}------------".format(i, calculate_N_from_level(i)))
-    #     #y = 5 * np.random.randint(0,10,(m * calculate_N_from_level(i), 1))
-    #     #iterate method
-    #     y, S = generate_sources(9, 4, i)
-    #     start = time.time()
-    #     ite_s = ConjugateSolution(sourcefilea,sourcefilet,m,n,i,y,0.001,tnum)
-    #     ite_x = ite_s.findSolution()
-    #     #pretty_print_matrix_S(ite_x, "x.txt")
-    #     with open("x_.npy", "wb") as f:
-    #         np.save(f, ite_x)
-    #     end = time.time()
-    #     print("iterate method took:{0}s".format(end - start))
-    #     sys.stdout.flush()
-
-        #std solution
-        #start = time.time()
-        #std_s = StdSolu(sourcefilea,sourcefilet,m,n,i,y)
-        #std_x = std_s.findSolution()
-        #end = time.time()
-        #print("standard method took:{0}s".format(end - start))
-        #sys.stdout.flush()
-
-        #distance = std_x - ite_x
-        #print("distance square:", np.dot(distance,distance))
-        #sys.stdout.flush()
+    main(sys.argv[1:])
