@@ -71,11 +71,13 @@ def main(argv):
         method_x = method_s.findSolution()
         np.savetxt('output/result_s_cg.txt', [method_x], delimiter=',', fmt='%0.20f')
     else:
-        method_s = StandardSolution(source_file_a, source_file_t, m, n, level, y)
+        method_s = StandardSolution(source_file_a, source_file_t, n, m, level, y)
         method_x = method_s.findSolution()
         np.savetxt('output/result_s_std.txt', [method_x], delimiter=',', fmt='%0.20f')
     end = time.time()
     print("The {0} method took {1} seconds".format(method, end - start))
+    distance = s - method_x
+    print("Distance square:", np.dot(distance,distance))
     
 if __name__ == '__main__':
     main(sys.argv[1:])

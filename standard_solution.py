@@ -8,9 +8,7 @@ class StandardSolution(Solution):
         super().__init__(afile, tfile, m, n, lvl, y)
 
     def findSolution(self):
-        D = self.get_D()
         Q = self.get_Q()
-
         B = self.get_B()
         BTrans = np.transpose(self.B)
         C = self.get_C()

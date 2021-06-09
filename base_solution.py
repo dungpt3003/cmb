@@ -45,10 +45,20 @@ class Solution:
         return self.D
 
     def get_Q(self):
+        qsize = self.num_n * self.num_N
+        Q = np.zeros((qsize,qsize), dtype = int)
+        DSqure = self.D.dot(self.D)
+        for s in range(0, qsize, self.num_N):
+            Q[s:s+self.num_N, s:s+self.num_N] = DSqure
+        self.Q = Q
+
         return self.Q
 
     def get_B(self):
+        self.B = np.kron(self.A, np.eye(self.num_N))
         return self.B
 
     def get_C(self):
+        self.N = np.eye(self.num_N)
+        self.C = np.kron(self.T,self.N)
         return self.C
