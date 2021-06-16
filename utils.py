@@ -48,8 +48,8 @@ def calc_free_emission(v):
 # Calculate the mxn matrix A
 # The first column is all 1 (CMB source)
 # The n-1 other columns represent other sources: synchrotron, glatic dust, free-free emission
-def calculate_matrix_A(m, n):
-    A = np.zeros((m, n))
+def calculate_matrix_A(n, m):
+    A = np.zeros((n, m))
     A[:, 0] = 1
     A[:, 1] = [calc_synchrotron(x) for x in V_PLANCK]
     A[:, 2] = [calc_galatic_dust(x) for x in V_PLANCK]
