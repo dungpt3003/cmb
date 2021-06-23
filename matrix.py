@@ -27,6 +27,19 @@ def load_diagonal_matrix_inverse(aFile):
             T[i,i] = 1/temp[i]
         return T
 
+# this is used in evaluation.py to load t.csv and then this is used to generate the diagonals
+# of the precision matrix C
+def load_array(aFile):
+    with open(aFile, "r") as f:
+       return np.loadtxt(f,delimiter=",")
+
+# Compute the mat-vec product Bs utilising the Kronecker structure of B
+def Bs(s, A, N):
+    S = np.reshape(s, (N, A.shape[1]), order='F')
+    BS = np.dot(S, np.transpose(A))
+    y = np.reshape(BS, (-1,), order='F')
+    return y
+    
 # Generate matrix matrix B as the Kronecker product of A and the identity matrix size N
 def generate_matrix_B(A, N):
     return np.kron(A, np.eye(N))

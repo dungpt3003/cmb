@@ -19,10 +19,14 @@ class Solution:
         self.T = None
         self.load_matrices_from_files()
         
-        self.B = generate_matrix_B(self.A, self.num_N)
-        self.C = generate_matrix_C(self.T, self.num_N)
-        self.D = generate_matrix_D(self.num_lvl)
-        self.Q = generate_matrix_Q(self.D, self.num_n, self.num_N)
+        #self.B = generate_matrix_B(self.A, self.num_N)
+        #self.C = generate_matrix_C(self.T, self.num_N)
+        #self.D = generate_matrix_D(self.num_lvl)
+        #self.Q = generate_matrix_Q(self.D, self.num_n, self.num_N)
+        #
+        # The above four lines are redundant in the Conjugate Gradients algorithm
+        # implementation . Perhaps not all of them are needed in the matrix inversion
+        # algorithm (standard_solution), but I have not thought this through.
         self.u = None
 
         self.N = None
