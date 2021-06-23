@@ -1,0 +1,5 @@
+The cg method took 61.54550218582153 seconds in level 6
+Distance: 0.28732502433480356
+The cg method took 1014.2155749797821 seconds in level 8
+Distance: 4.582728840050368
+Current memory usage: 0.124042, Peak Memory Usage: 773.415071

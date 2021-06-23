@@ -8,6 +8,7 @@ from utils import *
 from conjugate_solution import ConjugateSolution
 from standard_solution import StandardSolution
 import sys, getopt
+import tracemalloc
 
 def generate_random_sources(n, m, h, mean_s, sd_s, printable=True):
     """Generate random source s and source vector y
@@ -79,9 +80,16 @@ def main(argv):
         method_x = method_s.findSolution()
         np.savetxt('output/result_s_std.txt', [method_x], delimiter=',', fmt='%0.20f')
     end = time.time()
-    print("The {0} method took {1} seconds".format(method, end - start))
     distance = s - method_x
-    print("Distance square:", np.dot(distance,distance))
+    with open("output/log.txt", "a") as f:
+        f.write("The {0} method took {1} seconds in level {2}\n".format(method, end - start, level))
+        f.write("Distance: {0}\n".format(np.dot(distance,distance)))
+    
     
 if __name__ == '__main__':
+    tracemalloc.start()
     main(sys.argv[1:])
+    mems = tracemalloc.get_traced_memory()
+    with open("output/log.txt", "a") as f:
+        f.write("Current memory usage: {0}, Peak Memory Usage: {1}".format(mems[0] / float(1000000), mems[1]/float(1000000)))
+    tracemalloc.stop()
