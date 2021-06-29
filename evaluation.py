@@ -40,8 +40,8 @@ def generate_random_sources(n, m, h, mean_s, sd_s, printable=True):
     #y = np.random.normal(mean_y, sd, mean_y.shape[0])
     y = np.random.normal(mean_y1, sd1, mean_y1.shape[0])
     if printable:
-        np.savetxt('output/random_y.txt', [y], delimiter=',', fmt='%0.20f')
-        np.savetxt('output/random_s.txt', [s], delimiter=',', fmt='%0.20f')
+        np.savetxt('output/random_y_level_{0}.txt'.format(h), [y], delimiter=',', fmt='%0.20f')
+        np.savetxt('output/random_s_level_{0}.txt'.format(h), [s], delimiter=',', fmt='%0.20f')
 
     return y, s
 
@@ -76,11 +76,11 @@ def main(argv):
         if method == 'cg':
             method_s = ConjugateSolution(source_file_a, source_file_t,  n,  m, l, y, 0.001, thread_num)
             method_x = method_s.findSolution()
-            np.savetxt('output/result_s_cg.txt', [method_x], delimiter=',', fmt='%0.20f')
+            np.savetxt('output/result_s_cg_level_{0}.txt'.format(l), [method_x], delimiter=',', fmt='%0.20f')
         else:
             method_s = StandardSolution(source_file_a, source_file_t, n, m, l, y)
             method_x = method_s.findSolution()
-            np.savetxt('output/result_s_std.txt', [method_x], delimiter=',', fmt='%0.20f')
+            np.savetxt('output/result_s_std_level_{0}.txt'.format(l), [method_x], delimiter=',', fmt='%0.20f')
         end = time.time()
         distance = s - method_x
         with open("output/log.txt", "a") as f:
