@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-from scipy import constants
 import numpy as np
 import math
 
 V_PLANCK = [x * (10**9) for x in [30.0, 44.0, 70.0, 100.0, 143.0, 217.0, 353.0, 545.0, 857.0]]
 V_0 = V_PLANCK[3]
-PLANCK_H = constants.Planck
-BOLTZMANN_K = constants.Boltzmann
+PLANCK_H = 6.62607015e-34
+BOLTZMANN_K = 1.380649e-23
 K_S = -2.65
 K_D = 1.5
 K_FF = -2.14

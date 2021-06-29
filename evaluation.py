@@ -69,27 +69,28 @@ def main(argv):
             level = int(arg)
         elif opt in ("-m", "--method"):
             method = arg
-    y, s = generate_random_sources(n, m, level, 1, 0.1, True)
-    start = time.time()
-    if method == 'cg':
-        method_s = ConjugateSolution(source_file_a, source_file_t,  n,  m, level, y, 0.001, thread_num)
-        method_x = method_s.findSolution()
-        np.savetxt('output/result_s_cg.txt', [method_x], delimiter=',', fmt='%0.20f')
-    else:
-        method_s = StandardSolution(source_file_a, source_file_t, n, m, level, y)
-        method_x = method_s.findSolution()
-        np.savetxt('output/result_s_std.txt', [method_x], delimiter=',', fmt='%0.20f')
-    end = time.time()
-    distance = s - method_x
-    with open("output/log.txt", "a") as f:
-        f.write("The {0} method took {1} seconds in level {2}\n".format(method, end - start, level))
-        f.write("Distance: {0}\n".format(np.dot(distance,distance)))
+    for l in range(1, level + 1):
+        tracemalloc.start()
+        y, s = generate_random_sources(n, m, l, 1, 0.1, True)
+        start = time.time()
+        if method == 'cg':
+            method_s = ConjugateSolution(source_file_a, source_file_t,  n,  m, l, y, 0.001, thread_num)
+            method_x = method_s.findSolution()
+            np.savetxt('output/result_s_cg.txt', [method_x], delimiter=',', fmt='%0.20f')
+        else:
+            method_s = StandardSolution(source_file_a, source_file_t, n, m, l, y)
+            method_x = method_s.findSolution()
+            np.savetxt('output/result_s_std.txt', [method_x], delimiter=',', fmt='%0.20f')
+        end = time.time()
+        distance = s - method_x
+        with open("output/log.txt", "a") as f:
+            f.write("The {0} method took {1} seconds in level {2}\n".format(method, end - start, l))
+            f.write("Distance: {0}\n".format(np.dot(distance,distance)))
+        mems = tracemalloc.get_traced_memory()
+        with open("output/log.txt", "a") as f:
+            f.write("Current memory usage: {0}, Peak Memory Usage: {1}\n".format(mems[0] / float(1000000), mems[1]/float(1000000)))
+        tracemalloc.stop()
     
     
 if __name__ == '__main__':
-    tracemalloc.start()
     main(sys.argv[1:])
-    mems = tracemalloc.get_traced_memory()
-    with open("output/log.txt", "a") as f:
-        f.write("Current memory usage: {0}, Peak Memory Usage: {1}".format(mems[0] / float(1000000), mems[1]/float(1000000)))
-    tracemalloc.stop()
