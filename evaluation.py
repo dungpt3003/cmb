@@ -56,8 +56,9 @@ def main(argv):
     # Define command line arguments: HEALPix level and method used.
     level = 1
     method = 'std'
+    data = 'random'
     try:
-        opts, args = getopt.getopt(argv,"hl:m:",["level=","method="])
+        opts, args = getopt.getopt(argv,"hl:m:d:",["level=","method=", "data="])
     except getopt.GetoptError:
         print ('evaluation.py -l <level> -m <method>')
         sys.exit(2)
@@ -69,9 +70,21 @@ def main(argv):
             level = int(arg)
         elif opt in ("-m", "--method"):
             method = arg
-    for l in range(1, level + 1):
+        elif opt in ("-d", "--data"):
+            data = arg
+    for l in range(level, level + 1):
         tracemalloc.start()
-        y, s = generate_random_sources(n, m, l, 1, 0.1, True)
+        if data == 'planck':
+            if l < 10:
+                y = np.loadtxt("data/y/vectory_{0}".format(l), delimiter=",")
+            else:
+                y = np.array([])
+                for i in range(4):
+                    temp = np.loadtxt("vectory_10_{0}".format(i), delimiter=",")
+                    y = np.concatenate((y, temp))
+            print(y.shape)
+        else:
+            y, _ = generate_random_sources(n, m, l, 1, 0.1, True)
         start = time.time()
         if method == 'cg':
             method_s = ConjugateSolution(source_file_a, source_file_t,  n,  m, l, y, 0.001, thread_num)
@@ -82,10 +95,8 @@ def main(argv):
             method_x = method_s.findSolution()
             np.savetxt('output/result_s_std_level_{0}.txt'.format(l), [method_x], delimiter=',', fmt='%0.20f')
         end = time.time()
-        distance = s - method_x
         with open("output/log.txt", "a") as f:
-            f.write("The {0} method took {1} seconds in level {2}\n".format(method, end - start, l))
-            f.write("Distance: {0}\n".format(np.dot(distance,distance)))
+            f.write("The {0} method took {1} seconds in level {2} on {3} data\n".format(method, end - start, l, data))
         mems = tracemalloc.get_traced_memory()
         with open("output/log.txt", "a") as f:
             f.write("Current memory usage: {0}, Peak Memory Usage: {1}\n".format(mems[0] / float(1000000), mems[1]/float(1000000)))
