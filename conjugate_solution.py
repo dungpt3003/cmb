@@ -68,7 +68,6 @@ class ConjugateSolution(Solution):
         #return matvec_reshape(self.P, self.DSqure, x, True)
         X = np.reshape(x, (self.num_N,self.num_n),order='F')
         X = self.DmulX(X)
-        X = self.DmulX(X)
         return np.reshape(X,(self.num_N*self.num_n),order='F')
 
 
