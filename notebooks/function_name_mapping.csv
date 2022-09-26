@@ -1,0 +1,11 @@
+,Profiling Function,Actual Function
+0,runtime.mapiternext,Runtime iterator
+1,runtime.mapiterinit,Variable initialization
+2,runtime.mapassign_faststr,String operation
+3,conjugate/solu.(*DXOpe).cal,Calculate Dv (Algorithm 1)
+4,conjugate/solu.findNeighbors,Find neighbors
+5,main.main,Main Solution
+6,reflect.unsafe_NewArray,Load vector Y
+7,mat.NewVecDense,Matvec products (3.1)
+8,conjugate/solu.NewSylSolu,Sylvester Solution
+9,fmt.(*buffer).write,Write Solution
