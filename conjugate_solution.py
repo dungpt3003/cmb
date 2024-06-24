@@ -67,6 +67,8 @@ class ConjugateSolution(Solution):
     def calQx(self, x):
         #return matvec_reshape(self.P, self.DSqure, x, True)
         X = np.reshape(x, (self.num_N,self.num_n),order='F')
+        print("X shape",X.shape)
+        print("Rank of X",matrix_rank_svd(X))
         X = self.DmulX(X)
         return np.reshape(X,(self.num_N*self.num_n),order='F')
 
@@ -108,3 +110,8 @@ class ConjugateSolution(Solution):
                 break
             p = r + beta * p
         return x
+    
+def matrix_rank_svd(array):
+    u, s, vh = np.linalg.svd(array)
+    threshold = np.finfo(s.dtype).eps * max(array.shape) * s[0]
+    return np.sum(s > threshold)

@@ -1,6 +1,15 @@
 import numpy as np
-from matrix import generate_matrix_D, load_diagonal_matrix
-
+from matrix import *
+from sylvester_efficient import *
+from scipy.linalg import solve_sylvester
+from utils import calculate_N_from_level
+import scipy as sp
+import matplotlib.pyplot as plt
+import numpy as np
+import time
+import json
+from scipy.sparse import lil_matrix, identity
+from scipy.sparse.linalg import eigsh
 def get_shat(a, t):
     """
     Calculate SHat = A^T * T * A.
@@ -16,9 +25,7 @@ def valid_shat(U, egvals):
     """
     R = np.diag(egvals)
     ret = U @ R @ U.T
-    print("Recomputed S Hat:")
-    print(ret)
-
+    
 def get_yhat(oriy, a, t, m, n, bign):
     """
     Compute YHat = Y * T * A.
@@ -99,22 +106,50 @@ def combined_sylvester_solver_with_N_star_1D_2(oriy, a, t, m, n, bign, tol, lvl)
     SHat = get_shat(a, t)
     
     # Compute N_star_1D_2
-    N = np.eye(bign)
-    D = generate_matrix_D(lvl)  # This will need the actual parameters/arguments once we know its signature
-    N_star_1D_2 = np.linalg.inv(N) @ np.square(D)
+    N = identity(bign, format='csc')
+    D = generate_matrix_D_efficient(lvl)  # This will need the actual parameters/arguments once we know its signature
+    print("N shape: ", N.shape)
+    print("D shape: ", D.shape)
     
+    N_star_1D_2 = N @ (D.power(2))
+    # N_star_1D_2 = sp.sparse.random(N.shape[0], N.shape[1], density=0.001)
+    # plot_sparse_matrix(N_star_1D_2)
+    print("Checkpoint 0, N-1D2 shape: ", N_star_1D_2.shape)
     # Solve the Sylvester equations to get the solution M
-    M = symmetric_sparse_sylvester_solver(YHat, N_star_1D_2, SHat, tol)
+    start = time.time()
+    #M_efficient = solve_sylvester_efficiently_corrected(N_star_1D_2, SHat, YHat)
+    M_efficient = algorithm_3_sparse_dense_timed(N_star_1D_2, SHat, YHat)
+    #M = symmetric_sparse_sylvester_solver(YHat, N_star_1D_2, SHat, tol)
+    stop = time.time()
+    #M_baseline = solve_sylvester(N_star_1D_2, SHat, YHat)
+    #diff = np.linalg.norm(M_baseline - M_efficient, 'fro')
+    print(f"Time for the case level = {lvl} is: {stop - start}")
     
-    return M
+    return M_efficient
 
 A = np.loadtxt("data/a.csv", delimiter=",")
 T = load_diagonal_matrix("data/t.csv")
-with open("data/y/vectory_1", "r") as file_y:
-    y_content = file_y.read()
-y = np.array([float(val) for val in y_content.split(",")])
+
+def plot_sparse_matrix(S):
+    plt.spy(S)
+    plt.show()
+
+def read_result_file(result_file):
+    with open(result_file, "r") as f:
+        data = f.read()
+        result = [float(x) for x in data[1:-1].split(" ")]
+    return np.array(result)
 
 # Testing the combined function
-m, n, bign, lvl, tol = 4, 9, 48, 1, 1e-9
-M_solution = combined_sylvester_solver_with_N_star_1D_2(y, A, T, m, n, bign, tol, lvl)
-print(M_solution)
+for lvl in range(1,11):
+   
+    m, n, bign, lvl, tol = 4, 9, calculate_N_from_level(lvl) , lvl, 1e-9
+    with open(f"data/y/vectory_{lvl}", "r") as file_y:
+        y_content = file_y.read()
+    y = np.array([float(val) for val in y_content.split(",")])
+    M_solution = combined_sylvester_solver_with_N_star_1D_2(y, A, T, m, n, bign, tol, lvl)
+    #M_baseline = read_result_file(f'output/output/result_syl_{lvl}')
+    # diff = np.linalg.norm(M_solution.flatten() - base_solution, 'fro')
+    # print(f'Residual for level = {lvl}: {diff}')
+    # with open(f"output/efficient_syl_{lvl}.txt", 'w') as f:
+    #     f.write(str(M_solution))

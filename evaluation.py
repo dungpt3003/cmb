@@ -55,8 +55,8 @@ def main(argv):
 
     # Define command line arguments: HEALPix level and method used.
     level = 1
-    method = 'std'
-    data = 'random'
+    method = 'cg'
+    data = 'planck'
     try:
         opts, args = getopt.getopt(argv,"hl:m:d:",["level=","method=", "data="])
     except getopt.GetoptError:
@@ -72,7 +72,7 @@ def main(argv):
             method = arg
         elif opt in ("-d", "--data"):
             data = arg
-    for l in range(level, level + 1):
+    for l in range(level, 11):
         tracemalloc.start()
         if data == 'planck':
             if l < 10:

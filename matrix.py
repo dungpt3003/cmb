@@ -2,6 +2,9 @@
 # This files contains functions to construct matrices 
 import numpy as np
 from utils import calculate_matrix_A, find_neighbors, calc_D_size, calculate_N_from_level
+from scipy.sparse import lil_matrix, identity
+from scipy.sparse.linalg import eigsh
+
 
 # Load normal matrix from file
 def load_matrix(aFile):
@@ -62,6 +65,20 @@ def generate_matrix_D(lvl):
         
         res[i][i] = -1 * len(neighbors)
     return res
+
+def generate_matrix_D_efficient(lvl):
+    size = calculate_N_from_level(lvl)
+    (m,n) = calc_D_size(lvl)
+    res = lil_matrix((size, size), dtype=int)  # Use LIL format for efficient construction
+
+    for I in range(size):
+        neighbors = find_neighbors(I, m, n) 
+        for pos in neighbors:
+            res[I, pos] = 1
+        
+        res[I, I] = -1 * len(neighbors)
+    
+    return res.tocsc()  # Convert to CSC format for efficient arithmetic operations
 
 # Generate matrix Q as Kronecker product of diagonal matrix P and D square
 def generate_matrix_Q(D, n, N):     

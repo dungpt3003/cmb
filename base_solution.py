@@ -15,14 +15,16 @@ class Solution:
         self.num_N = calculate_N_from_level(lvl)
 
         # Init matrices
-        self.A = None
-        self.T = None
-        self.load_matrices_from_files()
+        # self.A = None
+        # self.T = None
+        # self.load_matrices_from_files()
+        self.A = load_matrix(self.af)
+        self.T = load_diagonal_matrix(self.tf)
         
-        #self.B = generate_matrix_B(self.A, self.num_N)
-        #self.C = generate_matrix_C(self.T, self.num_N)
-        #self.D = generate_matrix_D(self.num_lvl)
-        #self.Q = generate_matrix_Q(self.D, self.num_n, self.num_N)
+        self.B = generate_matrix_B(self.A, self.num_N)
+        self.C = generate_matrix_C(self.T, self.num_N)
+        self.D = generate_matrix_D(self.num_lvl)
+        self.Q = generate_matrix_Q(self.D, self.num_n, self.num_N)
         #
         # The above four lines are redundant in the Conjugate Gradients algorithm
         # implementation . Perhaps not all of them are needed in the matrix inversion
